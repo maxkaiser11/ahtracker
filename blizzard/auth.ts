@@ -3,7 +3,7 @@ import {env} from '../config/env';
 
 import { CommoditiesResponse, TokenResponse } from './schema';
 
-async function getAccessToken(): Promise<string> {
+export async function getAccessToken(): Promise<string> {
     const credentials = Buffer.from(`${env.API_CLIENT}:${env.CLIENT_SECRET}`).toString('base64');
 
     const res = await fetch('https://oauth.battle.net/token', {
@@ -21,7 +21,7 @@ async function getAccessToken(): Promise<string> {
     return data.access_token;
 }
 
-async function getCommodities(token: string): Promise<CommoditiesResponse> {
+export async function getCommodities(token: string): Promise<CommoditiesResponse> {
     const url = 'https://eu.api.blizzard.com/data/wow/auctions/commodities?namespace=dynamic-eu&locale=en_GB';
 
     const res = await fetch(url, {
@@ -40,5 +40,3 @@ async function main() {
     await writeFile('commodities.json', JSON.stringify(data, null, 2));
     console.log('Saved to commodities.json');
 }
-
-main().catch(console.error);

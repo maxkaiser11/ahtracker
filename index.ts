@@ -1,12 +1,30 @@
-import { Response, Request } from 'express';
 import express from 'express';
-import { config } from 'dotenv';
+import { getAccessToken, getCommodities } from './blizzard/auth';
+import { summarise, type ItemSummary } from './blizzard/aggregate';
+import { Response, Request } from 'express';
 
 const app = express();
 
-app.get('/', (req: Request, res: Response) => {
-  res.send({message: "Hello World"});
+let summary: ItemSummary[] = [];
+let updatedAt: Date | null = null;
+
+async function refresh() {
+    try {
+        const token = await getAccessToken();
+        const data = await getCommodities(token);
+        summary = summarise(data.auctions);
+        updatedAt = new Date();
+        console.log(`Refreshed: ${summary.length} items`);
+    } catch (err) {
+        console.error('Refresh failed:', err);
+    }
+}
+
+app.get('/api/commodities', (req: Request, res: Response) => {
+    res.json({ updatedAt, items: summary });
 });
 
+await refresh();
+setInterval(refresh, 60 * 60 * 1000);
 
-app.listen(3000, () => console.log('Listenting on port 3000'));
+app.listen(3000, () => console.log('Listening on port 3000'));
