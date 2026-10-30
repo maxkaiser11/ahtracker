@@ -24,4 +24,9 @@ export const CommoditiesResponse = z.object({
     auctions: z.array(CommodityAuction),
 });
 
+export const ItemResponse = z.object({
+    id: z.number(),
+    name: z.string(),
+});
+
 export type CommoditiesResponse = z.infer<typeof CommoditiesResponse>;
