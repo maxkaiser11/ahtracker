@@ -29,4 +29,8 @@ export const ItemResponse = z.object({
     name: z.string(),
 });
 
+export const ItemMediaResponse = z.object({
+    assets: z.array(z.object({ key: z.string(), value: z.string() })).default([]),
+});
+
 export type CommoditiesResponse = z.infer<typeof CommoditiesResponse>;
